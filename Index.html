@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>सत्यम डायग्नोस्टिक लैब्स | चिचगोहन, भेरूखेड़ा</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #eef3f8;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #004aad, #0284c7);
+            color: #ffffff;
+            text-align: center;
+            padding: 22px 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+        header h1 {
+            font-size: 1.85rem;
+            margin-bottom: 4px;
+        }
+        header .tagline {
+            color: #fde047;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        header .lab-meta {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: #e0f2fe;
+        }
+
+        /* First Interface: Two Main Options */
+        .main-wrapper {
+            max-width: 820px;
+            margin: 22px auto;
+            padding: 0 15px;
+        }
+        .first-interface-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .option-card {
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+        }
+        .option-card:hover {
+            transform: translateY(-2px);
+            border-color: #004aad;
+        }
+        .option-card.active-staff {
+            border-color: #0f172a;
+            background: #f8fafc;
+            box-shadow: 0 5px 14px rgba(15, 23, 42, 0.14);
+        }
+        .option-card.active-patient {
+            border-color: #004aad;
+            background: #f0f9ff;
+            box-shadow: 0 5px 14px rgba(0, 74, 173, 0.14);
+        }
+        .option-badge {
+            display: inline-block;
+            font-size: 0.78rem;
+            font-weight: bold;
+            padding: 3px 9px;
+            border-radius: 999px;
+            margin-bottom: 8px;
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+        .option-title {
+            font-size: 1.15rem;
+            font-weight: bold;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+        .option-desc {
+            font-size: 0.88rem;
+            color: #475569;
+        }
+
+        /* Panels */
+        .panel {
+            display: none;
+        }
+        .panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+        .card h2 {
+            font-size: 1.3rem;
+            color: #004aad;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 14px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #1e293b;
+            font-size: 0.95rem;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.98rem;
+            background: #fff;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #004aad;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+        .btn:hover {
+            opacity: 0.94;
+        }
+        .btn-login {
+            background: #0f172a;
+            color: #ffffff;
+        }
+        .btn-whatsapp {
+            background: #25d366;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.28);
+        }
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #0f172a;
+            width: auto;
+            padding: 8px 14px;
+            font-size: 0.88rem;
+        }
+        .btn-danger {
+            background: #dc2626;
+            color: #ffffff;
+            width: auto;
+            padding: 8px 14px;
+            font-size: 0.88rem;
+        }
+
+        .error-msg {
+            color: #dc2626;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 8px;
+            text-align: center;
+            min-height: 20px;
+        }
+
+        /* Dashboard Table */
+        .dash-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .table-wrap {
+            overflow-x: auto;
+            margin-top: 14px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+        }
+        th {
+            background: #f1f5f9;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        /* Poster & Packages in Patient Section */
+        .poster-box {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .poster-box img {
+            width: 100%;
+            max-width: 580px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 14px;
+            margin-top: 14px;
+        }
+        .pkg-box {
+            border: 1px solid #e2e8f0;
+            border-top: 4px solid #004aad;
+            border-radius: 10px;
+            padding: 14px;
+            background: #f8fafc;
+        }
+        .pkg-price {
+            font-size: 1.35rem;
+            font-weight: bold;
+            color: #b91c1c;
+            margin: 6px 0;
+        }
+        .pkg-box ul {
+            list-style: none;
+            font-size: 0.86rem;
+            margin-bottom: 10px;
+        }
+        .pkg-box ul li::before {
+            content: "✔ ";
+            color: #15803d;
+            font-weight: bold;
+        }
+        .pkg-select-btn {
+            width: 100%;
+            padding: 8px;
+            background: #004aad;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.88rem;
+        }
+
+        footer {
+            background: #0f172a;
+            color: #cbd5e1;
+            text-align: center;
+            padding: 18px 15px;
+            margin-top: 30px;
+            font-size: 0.88rem;
+        }
+        footer a {
+            color: #fde047;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🔬 सत्यम डायग्नोस्टिक लैब्स</h1>
+        <p class="tagline">सही जांच... बेहतर इलाज...</p>
+        <div class="lab-meta">📍 पता: चिचगोहन, भेरूखेड़ा | 📞 रितिक साल्वे: 9171980680</div>
+    </header>
+
+    <div class="main-wrapper">
+        <!-- फर्स्ट इंटरफेस: दो मुख्य विकल्प -->
+        <div class="first-interface-options">
+            <button type="button" class="option-card" id="card-staff" onclick="openSection('staff')">
+                <span class="option-badge">विकल्प 1 • लैब लॉगिन</span>
+                <div class="option-title">🔐 स्टाफ / एडमिन लॉगिन</div>
+                <div class="option-desc">नाम और पासवर्ड डालकर लॉग इन करें, रिपोर्ट तारीख व स्थिति अपडेट करें।</div>
+            </button>
+
+            <button type="button" class="option-card active-patient" id="card-patient" onclick="openSection('patient')">
+                <span class="option-badge">विकल्प 2 • मरीज़ बुकिंग</span>
+                <div class="option-title">🧪 जांच बुक करें (WhatsApp)</div>
+                <div class="option-desc">नाम, मोबाइल नंबर और जांच डालकर सीधे WhatsApp पर बुकिंग भेजें।</div>
+            </button>
+        </div>
+
+        <!-- सेक्शन 1: स्टाफ लॉगिन और रिपोर्ट डैशबोर्ड -->
+        <div id="section-staff" class="panel">
+            <!-- लॉगिन बॉक्स -->
+            <div class="card" id="login-box" style="max-width: 440px; margin: 0 auto 20px auto;">
+                <h2>लैब स्टाफ लॉगिन</h2>
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="staffUser">आपका नाम / यूज़रनेम</label>
+                        <input type="text" id="staffUser" placeholder="यूज़रनेम डालें" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="staffPass">पासवर्ड</label>
+                        <input type="password" id="staffPass" placeholder="पासवर्ड डालें" required>
+                    </div>
+                    <button type="submit" class="btn btn-login">लॉग इन करें</button>
+                    <div class="error-msg" id="loginError"></div>
+                </form>
+            </div>
+
+            <!-- लॉग इन के बाद रिपोर्ट व तारीख मैनेजमेंट डैशबोर्ड -->
+            <div class="card" id="report-dashboard" style="display: none;">
+                <div class="dash-header">
+                    <div>
+                        <h2 style="text-align:left; margin-bottom:2px;">📋 रिपोर्ट व तारीख प्रबंधन</h2>
+                        <small style="color:#475569;">लैब रिकॉर्ड (इस ब्राउज़र में सेव)</small>
+                    </div>
+                    <button type="button" class="btn-danger" onclick="logoutStaff()">लॉग आउट</button>
+                </div>
+
+                <form onsubmit="addReportRecord(event)">
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px;">
+                        <div class="form-group">
+                            <label for="recPatientName">मरीज़ का नाम *</label>
+                            <input type="text" id="recPatientName" placeholder="मरीज़ का नाम" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="recMobile">मोबाइल नंबर *</label>
+                            <input type="tel" id="recMobile" placeholder="10 अंकों का नंबर" maxlength="10" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="recTest">जांच का नाम *</label>
+                            <input type="text" id="recTest" placeholder="उदा. CBC, CRL 1.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="recDate">रिपोर्ट तारीख *</label>
+                            <input type="date" id="recDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="recStatus">रिपोर्ट स्थिति</label>
+                            <select id="recStatus">
+                                <option value="सैंपल लिया गया">सैंपल लिया गया</option>
+                                <option value="जांच जारी है">जांच जारी है</option>
+                                <option value="रिपोर्ट तैयार है">रिपोर्ट तैयार है</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-login" style="margin-top:6px;">+ रिपोर्ट रिकॉर्ड सेव करें</button>
+                </form>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>मरीज़</th>
+                                <th>जांच</th>
+                                <th>रिपोर्ट तारीख</th>
+                                <th>स्थिति</th>
+                                <th>एक्शन</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- सेक्शन 2: पेशेंट जांच बुकिंग + इमेज व पैकेज -->
+        <div id="section-patient" class="panel active">
+            <div class="card">
+                <h2>पेशेंट जांच बुकिंग फॉर्म</h2>
+                <p style="text-align:center; color:#475569; font-size:0.9rem; margin-bottom:16px;">
+                    अपना नाम, मोबाइल नंबर और जांच भरें — मैसेज सीधे <strong>9171980680</strong> पर खुलेगा।
+                </p>
+
+                <div class="form-group">
+                    <label for="patientName">मरीज़ का नाम *</label>
+                    <input type="text" id="patientName" placeholder="मरीज़ का पूरा नाम लिखें">
+                </div>
+
+                <div class="form-group">
+                    <label for="patientMobile">मोबाइल नंबर *</label>
+                    <input type="tel" id="patientMobile" placeholder="10 अंकों का मोबाइल नंबर" maxlength="10">
+                </div>
+
+                <div class="form-group">
+                    <label for="patientTest">जांच या पैकेज चुनें *</label>
+                    <select id="patientTest" onchange="toggleOtherTest()">
+                        <option value="WELLNESS CRL 1.1 (₹1,050)">WELLNESS CRL 1.1 - ₹1,050/-</option>
+                        <option value="WELLNESS CRL 1.2 (₹1,500)">WELLNESS CRL 1.2 - ₹1,500/-</option>
+                        <option value="WELLNESS CRL 1.3 (₹3,000)">WELLNESS CRL 1.3 - ₹3,000/-</option>
+                        <option value="WELLNESS CRL 1.4 (₹3,500)">WELLNESS CRL 1.4 - ₹3,500/-</option>
+                        <option value="अन्य जांच">अन्य जांच (नाम नीचे लिखें)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="otherTestWrap" style="display:none;">
+                    <label for="otherTestInput">जांच का नाम लिखें *</label>
+                    <input type="text" id="otherTestInput" placeholder="जैसे: CBC, शुगर, थायराइड, मलेरिया आदि">
+                </div>
+
+                <button type="button" class="btn btn-whatsapp" onclick="bookViaWhatsApp()">
+                    📲 WhatsApp पर जांच बुक करें
+                </button>
+            </div>
+
+            <!-- पोस्टर इमेज व पैकेज विवरण -->
+            <div class="card">
+                <h2>लैब पोस्टर व हेल्थ पैकेज</h2>
+                <div class="poster-box">
+                    <img src="banner.jpg" alt="सत्यम डायग्नोस्टिक लैब्स पोस्टर">
+                </div>
+
+                <div class="packages-grid">
+                    <div class="pkg-box">
+                        <strong>WELLNESS CRL 1.1</strong>
+                        <div class="pkg-price">₹ 1,050/-</div>
+                        <ul>
+                            <li>CBC, ESR, Glucose Fasting</li>
+                            <li>LFT, Kidney, Lipid Basic</li>
+                            <li>Thyroid (T3, T4, TSH), Urine</li>
+                        </ul>
+                        <button type="button" class="pkg-select-btn" onclick="pickPackage('WELLNESS CRL 1.1 (₹1,050)')">जांच चुनें</button>
+                    </div>
+
+                    <div class="pkg-box" style="border-top-color:#15803d;">
+                        <strong>WELLNESS CRL 1.2</strong>
+                        <div class="pkg-price">₹ 1,500/-</div>
+                        <ul>
+                            <li>CRL 1.1 के सभी टेस्ट</li>
+                            <li>HbA1c, Iron, TIBC</li>
+                            <li>Transferrin Saturation</li>
+                        </ul>
+                        <button type="button" class="pkg-select-btn" style="background:#15803d;" onclick="pickPackage('WELLNESS CRL 1.2 (₹1,500)')">जांच चुनें</button>
+                    </div>
+
+                    <div class="pkg-box" style="border-top-color:#7e22ce;">
+                        <strong>WELLNESS CRL 1.3</strong>
+                        <div class="pkg-price">₹ 3,000/-</div>
+                        <ul>
+                            <li>CRL 1.2 के सभी टेस्ट</li>
+                            <li>Vitamin B12</li>
+                            <li>Vitamin D3 25-Hydroxy</li>
+                        </ul>
+                        <button type="button" class="pkg-select-btn" style="background:#7e22ce;" onclick="pickPackage('WELLNESS CRL 1.3 (₹3,000)')">जांच चुनें</button>
+                    </div>
+
+                    <div class="pkg-box" style="border-top-color:#b91c1c;">
+                        <strong>WELLNESS CRL 1.4</strong>
+                        <div class="pkg-price">₹ 3,500/-</div>
+                        <ul>
+                            <li>CRL 1.3 के सभी टेस्ट</li>
+                            <li>eGFR, Iron Profile Basic</li>
+                            <li>Glucose Sugar Test</li>
+                        </ul>
+                        <button type="button" class="pkg-select-btn" style="background:#b91c1c;" onclick="pickPackage('WELLNESS CRL 1.4 (₹3,500)')">जांच चुनें</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p><strong>सत्यम डायग्नोस्टिक लैब्स</strong> • चिचगोहन, भेरूखेड़ा</p>
+        <p style="margin-top:4px;">संपर्क: रितिक साल्वे — <a href="tel:+919171980680">9171980680</a></p>
+    </footer>
+
+    <script>
+        // अपना स्टाफ लॉगिन यूज़रनेम और पासवर्ड यहाँ बदलें
+        const STAFF_USER = "admin";
+        const STAFF_PASS = "satyam123";
+        const LAB_WHATSAPP = "919171980680";
+        const STORAGE_KEY = "satyam_lab_reports_v1";
+
+        function openSection(section) {
+            const staffPanel = document.getElementById("section-staff");
+            const patientPanel = document.getElementById("section-patient");
+            const cardStaff = document.getElementById("card-staff");
+            const cardPatient = document.getElementById("card-patient");
+
+            if (section === "staff") {
+                staffPanel.classList.add("active");
+                patientPanel.classList.remove("active");
+                cardStaff.classList.add("active-staff");
+                cardPatient.classList.remove("active-patient");
+            } else {
+                patientPanel.classList.add("active");
+                staffPanel.classList.remove("active");
+                cardPatient.classList.add("active-patient");
+                cardStaff.classList.remove("active-staff");
+            }
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const u = document.getElementById("staffUser").value.trim();
+            const p = document.getElementById("staffPass").value;
+            const err = document.getElementById("loginError");
+
+            if (u === STAFF_USER && p === STAFF_PASS) {
+                err.textContent = "";
+                document.getElementById("login-box").style.display = "none";
+                document.getElementById("report-dashboard").style.display = "block";
+                renderReports();
+            } else {
+                err.textContent = "गलत नाम या पासवर्ड। कृपया दोबारा प्रयास करें।";
+            }
+        }
+
+        function logoutStaff() {
+            document.getElementById("staffPass").value = "";
+            document.getElementById("report-dashboard").style.display = "none";
+            document.getElementById("login-box").style.display = "block";
+        }
+
+        function getReports() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveReports(list) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        }
+
+        function addReportRecord(event) {
+            event.preventDefault();
+            const name = document.getElementById("recPatientName").value.trim();
+            const mobile = document.getElementById("recMobile").value.trim();
+            const test = document.getElementById("recTest").value.trim();
+            const date = document.getElementById("recDate").value;
+            const status = document.getElementById("recStatus").value;
+
+            const list = getReports();
+            list.unshift({ id: Date.now(), name, mobile, test, date, status });
+            saveReports(list);
+
+            event.target.reset();
+            renderReports();
+        }
+
+        function deleteReportRecord(id) {
+            const updated = getReports().filter(item => item.id !== id);
+            saveReports(updated);
+            renderReports();
+        }
+
+        function notifyPatient(id) {
+            const item = getReports().find(r => r.id === id);
+            if (!item) return;
+            const cleanMob = item.mobile.replace(/\D/g, "");
+            const targetPhone = cleanMob.length === 10 ? "91" + cleanMob : cleanMob;
+            const msg = `नमस्ते ${item.name}, सत्यम डायग्नोस्टिक लैब्स से जानकारी:%0A` +
+                        `🧪 जांच: ${item.test}%0A` +
+                        `📅 रिपोर्ट तारीख: ${item.date}%0A` +
+                        `📌 स्थिति: ${item.status}`;
+            window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(decodeURIComponent(msg))}`, "_blank");
+        }
+
+        function renderReports() {
+            const tbody = document.getElementById("reportTableBody");
+            const list = getReports();
+
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#64748b;">अभी कोई रिकॉर्ड दर्ज नहीं है।</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = list.map(item => `
+                <tr>
+                    <td><strong>${item.name}</strong><br><small>${item.mobile}</small></td>
+                    <td>${item.test}</td>
+                    <td>${item.date}</td>
+                    <td>${item.status}</td>
+                    <td style="white-space:nowrap;">
+                        <button type="button" class="btn-secondary" onclick="notifyPatient(${item.id})">WhatsApp</button>
+                        <button type="button" class="btn-danger" onclick="deleteReportRecord(${item.id})">हटाएं</button>
+                    </td>
+                </tr>
+            `).join("");
+        }
+
+        function toggleOtherTest() {
+            const sel = document.getElementById("patientTest").value;
+            document.getElementById("otherTestWrap").style.display = (sel === "अन्य जांच") ? "block" : "none";
+        }
+
+        function pickPackage(pkgName) {
+            const sel = document.getElementById("patientTest");
+            sel.value = pkgName;
+            toggleOtherTest();
+            document.getElementById("patientName").scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+
+        function bookViaWhatsApp() {
+            const name = document.getElementById("patientName").value.trim();
+            const mobile = document.getElementById("patientMobile").value.trim();
+            const selected = document.getElementById("patientTest").value;
+            const other = document.getElementById("otherTestInput").value.trim();
+
+            if (!name || !mobile) {
+                alert("कृपया मरीज़ का नाम और मोबाइल नंबर भरें।");
+                return;
+            }
+
+            const testName = (selected === "अन्य जांच") ? (other || "अन्य जांच") : selected;
+
+            const text = `*नमस्ते सत्यम डायग्नोस्टिक लैब्स,*%0A` +
+                         `जांच बुकिंग का अनुरोध:%0A%0A` +
+                         `👤 *नाम:* ${encodeURIComponent(name)}%0A` +
+                         `📞 *मोबाइल:* ${encodeURIComponent(mobile)}%0A` +
+                         `🧪 *जांच/पैकेज:* ${encodeURIComponent(testName)}`;
+
+            window.open(`https://wa.me/${LAB_WHATSAPP}?text=${text}`, "_blank");
+        }
+    </script>
+</body>
+</html>
